@@ -11,7 +11,6 @@ class MainMenu:
         self.next_user_id = 1
 
 
-
     def run(self):
         while True:
             print('1. Create Account')
@@ -47,11 +46,11 @@ class MainMenu:
 
         self.next_user_id += 1
 
-
-        
         
     def log_into_account(self):
-        pass
+        print('=== Log into Account ===\n')
+        user_id = input('Please Enter Your User ID: ')
+        self.user_id = user_id
 
     def make_stock_bid(self):
         pass
