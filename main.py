@@ -85,7 +85,7 @@ class MainMenu:
 
         new_account = Account(f_name, l_name, email, user_id)
         self.accounts.append(new_account)
-        self.save_data
+        self.save_data()
 
         print(f'\nAccount created successfully!')
         print(f'Your unique User ID is: {user_id}')
@@ -101,7 +101,7 @@ class MainMenu:
             return
         
         for acc in self.accounts:
-            if acc.get_user_id == entered_id:
+            if acc.get_user_id() == entered_id:
                 self.current_user_id = entered_id
                 print(f'\nLogin successful! Welcome, {acc.first_name} {acc.last_name}')
                 print(f'Account: {acc}')

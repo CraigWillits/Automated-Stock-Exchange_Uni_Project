@@ -5,6 +5,9 @@ class Bidding:
         self.amount = int(amount)
         self.__user_id = int(user_id)
 
+    def get_user_id(self):
+        return self.__user_id
+
     def to_dict(self):
         return {
             'stock_name': self.stock_name,
@@ -19,4 +22,3 @@ class Bidding:
     
 
 
-    
