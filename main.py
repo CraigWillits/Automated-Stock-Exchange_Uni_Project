@@ -16,10 +16,11 @@ class MainMenu:
     
     def load_data(self):
         '''Load All Saved Data'''
-        if os.path.exists('account.json'):
+        if os.path.exists('accounts.json'):
             with open('accounts.json', 'r') as f:
                 data = json.load(f)
                 self.accounts = [Account.from_dict(acc) for acc in data]
+            print(f'[DEBUG] Loaded {len(self.accounts)} account(s)')
 
         if os.path.exists('biddings.json'):
             with open('biddings.json', 'r') as f:
