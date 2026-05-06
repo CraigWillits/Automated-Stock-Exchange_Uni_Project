@@ -74,7 +74,7 @@ class MainMenu:
 
 
     def account_creation(self):
-        print('/n=== Create New Account ===')
+        print('\n=== Create New Account ===')
         f_name = input('Plese Enter Your First Name: ')
         l_name = input('Plese Enter Your Last Name: ')
         email = input('Plese Enter Your Email: ')
