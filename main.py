@@ -13,7 +13,7 @@ class MainMenu:
         self.asking = []
         self.current_user_id = None
         self.load_data()
-    
+
     def load_data(self):
         '''Load All Saved Data'''
         if os.path.exists('accounts.json'):
@@ -81,7 +81,7 @@ class MainMenu:
 
         while True:
             user_id = random.randint(100000, 999999)
-            if not any(acc.user_id == user_id for acc in self.accounts):
+            if not any(acc.get_user_id() == user_id for acc in self.accounts):
                 break
 
         new_account = Account(f_name, l_name, email, user_id)
@@ -92,7 +92,7 @@ class MainMenu:
         print(f'Your unique User ID is: {user_id}')
         print('Save this ID — it is the ONLY way to access your account.')
 
-        
+
     def log_into_account(self):
         print('\n=== Log into Account ===\n')
         try:
@@ -100,21 +100,69 @@ class MainMenu:
         except ValueError:
             print("Invalid User ID format.")
             return
-        
+
         for acc in self.accounts:
             if acc.get_user_id() == entered_id:
                 self.current_user_id = entered_id
                 print(f'\nLogin successful! Welcome, {acc.first_name} {acc.last_name}')
                 print(f'Account: {acc}')
                 return
-        
+
         print('No account found with that User ID.')
 
     def make_stock_bid(self):
-        pass
+        print('\n=== Make a Stock Bidding ===')
+        stock_name = input('Enter Stock Name: ').strip().upper()
+
+        try:
+            bidding_price = float(input('Enter Bidding Price: '))
+            amount = int(input('Enter Amount: '))
+        except ValueError:
+            print("Invalid price or amount.")
+            return
+
+        if self.current_user_id is not None:
+            user_id = self.current_user_id
+        else:
+            try:
+                user_id = int(input('Enter Your User ID: '))
+            except ValueError:
+                print("Invalid User ID format.")
+                return
+
+        new_bid = Bidding(stock_name, bidding_price, amount, user_id)
+        self.bidding.append(new_bid)
+        print(f'\nBid placed for {stock_name} at {bidding_price}.')
+
+        self.check_for_matches()
+        self.save_data()
 
     def make_stock_ask(self):
-        pass
+        print('\n=== Make a Stock Asking ===')
+        stock_name = input('Enter Stock Name: ').strip().upper()
+
+        try:
+            asking_price = float(input('Enter Asking Price: '))
+            amount = int(input('Enter Amount: '))
+        except ValueError:
+            print("Invalid price or amount.")
+            return
+
+        if self.current_user_id is not None:
+            user_id = self.current_user_id
+        else:
+            try:
+                user_id = int(input('Enter Your User ID: '))
+            except ValueError:
+                print("Invalid User ID format.")
+                return
+
+        new_ask = Asking(stock_name, asking_price, amount, user_id)
+        self.asking.append(new_ask)
+        print(f'\nAsk placed for {stock_name} at {asking_price}.')
+
+        self.check_for_matches()
+        self.save_data()
 
     def exit_program(self):
         self.save_data()
@@ -122,7 +170,36 @@ class MainMenu:
         exit()
 
     def check_for_matches(self):
-        pass
+        matched = True
+        while matched:
+            matched = False
+            for bid in list(self.bidding):
+                for ask in list(self.asking):
+                    if bid.stock_name == ask.stock_name and bid.bidding_price >= ask.asking_price:
+                        if ask.amount == bid.amount:
+                            number_of_orders = bid.amount
+                            self.bidding.remove(bid)
+                            self.asking.remove(ask)
+                        elif ask.amount > bid.amount:
+                            number_of_orders = bid.amount
+                            ask.amount -= bid.amount
+                            self.bidding.remove(bid)
+                        else:
+                            number_of_orders = ask.amount
+                            bid.amount -= ask.amount
+                            self.asking.remove(ask)
+
+                        print(f'{number_of_orders} order(s) successfully has been executed at {bid.bidding_price}')
+                        self.record_transaction(bid.stock_name, number_of_orders, bid.bidding_price, bid.get_user_id(), ask.get_user_id())
+                        self.save_data()
+                        matched = True
+                        break
+                if matched:
+                    break
+
+    def record_transaction(self, stock_name, number_of_orders, execution_price, bidding_user_id, asking_user_id):
+        with open('transactions.txt', 'a') as f:
+            f.write(f'{stock_name},{number_of_orders},{execution_price},{bidding_user_id},{asking_user_id}\n')
 
 
 if __name__ == "__main__":
