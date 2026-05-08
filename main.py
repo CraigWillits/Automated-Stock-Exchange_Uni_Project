@@ -20,7 +20,7 @@ class MainMenu:
             with open('accounts.json', 'r') as f:
                 data = json.load(f)
                 self.accounts = [Account.from_dict(acc) for acc in data]
-            print(f'[DEBUG] Loaded {len(self.accounts)} account(s)')
+            #print(f'[DEBUG] Loaded {len(self.accounts)} account(s)')
 
         if os.path.exists('biddings.json'):
             with open('biddings.json', 'r') as f:
@@ -70,14 +70,14 @@ class MainMenu:
             elif menu_location == 5:
                 self.exit_program()
             else:
-                print("Invalid choice. Please try again.")
+                print('Invalid choice. Please try again.')
 
 
     def account_creation(self):
         print('\n=== Create New Account ===')
-        f_name = input('Plese Enter Your First Name: ')
-        l_name = input('Plese Enter Your Last Name: ')
-        email = input('Plese Enter Your Email: ')
+        f_name = input('\nEnter Your First Name: \n')
+        l_name = input('\nEnter Your Last Name: \n')
+        email = input('\nEnter Your Email: \n')
 
         while True:
             user_id = random.randint(100000, 999999)
@@ -89,7 +89,7 @@ class MainMenu:
         self.save_data()
 
         print(f'\nAccount created successfully!')
-        print(f'Your unique User ID is: {user_id}')
+        print(f'\nYour unique User ID is: {user_id}\n')
         print('Save this ID — it is the ONLY way to access your account.')
 
 
@@ -122,13 +122,14 @@ class MainMenu:
             return
 
         if self.current_user_id is not None:
-            user_id = self.current_user_id
+            print(f"You are currently logged in as User ID: {self.current_user_id}")
+            use_current = input("Use this logged-in User ID? (y/n): ").strip().lower()
+            if use_current == 'y' or use_current == 'yes':
+                user_id = self.current_user_id
+            else:
+                user_id = int(input('Enter User ID for this bid: '))
         else:
-            try:
-                user_id = int(input('Enter Your User ID: '))
-            except ValueError:
-                print("Invalid User ID format.")
-                return
+            user_id = int(input('Enter Your User ID: '))
 
         new_bid = Bidding(stock_name, bidding_price, amount, user_id)
         self.bidding.append(new_bid)
@@ -149,13 +150,14 @@ class MainMenu:
             return
 
         if self.current_user_id is not None:
-            user_id = self.current_user_id
+            print(f"You are currently logged in as User ID: {self.current_user_id}")
+            use_current = input("Use this logged-in User ID? (y/n): ").strip().lower()
+            if use_current == 'y' or use_current == 'yes':
+                user_id = self.current_user_id
+            else:
+                user_id = int(input('Enter User ID for this ask: '))
         else:
-            try:
-                user_id = int(input('Enter Your User ID: '))
-            except ValueError:
-                print("Invalid User ID format.")
-                return
+            user_id = int(input('Enter Your User ID: '))
 
         new_ask = Asking(stock_name, asking_price, amount, user_id)
         self.asking.append(new_ask)

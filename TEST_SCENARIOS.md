@@ -1,62 +1,71 @@
-# Test Scenarios
+# Test Scenarios for Professor / TA
 
-How to test the program. Run `python main.py` and create at least 2 accounts first so you have two different User IDs to use as the buyer and the seller.
+**How to Test the Automated Stock Exchange System**
 
-In the steps below:
-- BUYER_ID = the account placing the bid (option 3)
-- SELLER_ID = the account placing the ask (option 4)
+1. Run the program: `python main.py`
+2. Create at least **one account** (option 1) and use another already implemented account; write down their User IDs also.
+3. Use the test scenarios below.  
+   - **BUYER_ID** = User ID placing the bid (option 3)  
+   - **SELLER_ID** = User ID placing the ask (option 4)
 
-After each scenario, check `transactions.txt` for a new line in the format:
-`stock_name,number_of_orders,execution_price,bidding_user_id,asking_user_id`
+After each test, check:
+- The success message printed on screen
+- `transactions.txt` for the new transaction line
+- `biddings.json` and `askings.json` for correct updates
 
+---
 
-## 1. Full match (equal amounts)
+### Scenario 1: Full Match (Equal Amounts)
 
-1. Option 3: stock = AAPL, bidding price = 150, amount = 10, user = BUYER_ID
-2. Option 4: stock = AAPL, asking price = 150, amount = 10, user = SELLER_ID
+1. Option 3 (Bid): Stock = AAPL, Price = 150, Amount = 10, User = BUYER_ID
+2. Option 4 (Ask): Stock = AAPL, Price = 150, Amount = 10, User = SELLER_ID
 
-Should print: `10 order(s) successfully has been executed at 150.0`
+**Expected Result:**
+- Message: `10 order(s) successfully has been executed at 150.0`
+- Both bid and ask are completely removed
+- `transactions.txt` contains: `AAPL,10,150.0,BUYER_ID,SELLER_ID`
 
-Check:
-- biddings.json no longer has the AAPL bid
-- askings.json no longer has the AAPL ask
-- transactions.txt has: `AAPL,10,150.0,BUYER_ID,SELLER_ID`
+---
 
+### Scenario 2: Partial Match (Asking Amount > Bidding Amount)
 
-## 2. Partial match (asking amount > bidding amount)
+1. Option 4 (Ask): Stock = MSFT, Price = 300, Amount = 20, User = SELLER_ID
+2. Option 3 (Bid): Stock = MSFT, Price = 310, Amount = 8, User = BUYER_ID
 
-1. Option 4: stock = MSFT, asking price = 300, amount = 20, user = SELLER_ID
-2. Option 3: stock = MSFT, bidding price = 310, amount = 8, user = BUYER_ID
+**Expected Result:**
+- Message: `8 order(s) successfully has been executed at 310.0`
+- Bid is removed
+- Ask remains with amount reduced to 12
+- `transactions.txt` contains: `MSFT,8,310.0,BUYER_ID,SELLER_ID`
 
-Should print: `8 order(s) successfully has been executed at 310.0`
+---
 
-Check:
-- biddings.json: MSFT bid removed
-- askings.json: MSFT ask still there but amount = 12
-- transactions.txt: `MSFT,8,310.0,BUYER_ID,SELLER_ID`
+### Scenario 3: Partial Match (Bidding Amount > Asking Amount)
 
+1. Option 3 (Bid): Stock = TSLA, Price = 250, Amount = 30, User = BUYER_ID
+2. Option 4 (Ask): Stock = TSLA, Price = 240, Amount = 12, User = SELLER_ID
 
-## 3. Partial match (bidding amount > asking amount)
+**Expected Result:**
+- Message: `12 order(s) successfully has been executed at 250.0`
+- Ask is removed
+- Bid remains with amount reduced to 18
+- `transactions.txt` contains: `TSLA,12,250.0,BUYER_ID,SELLER_ID`
 
-1. Option 3: stock = TSLA, bidding price = 250, amount = 30, user = BUYER_ID
-2. Option 4: stock = TSLA, asking price = 240, amount = 12, user = SELLER_ID
+---
 
-Should print: `12 order(s) successfully has been executed at 250.0`
+### Scenario 4: No Match
 
-Check:
-- askings.json: TSLA ask removed
-- biddings.json: TSLA bid still there but amount = 18
-- transactions.txt: `TSLA,12,250.0,BUYER_ID,SELLER_ID`
+1. Option 3 (Bid): Stock = GOOG, Price = 100, Amount = 5, User = BUYER_ID
+2. Option 4 (Ask): Stock = GOOG, Price = 150, Amount = 5, User = SELLER_ID
 
+**Expected Result:**
+- No execution message
+- No new line in `transactions.txt`
+- Both bid and ask remain unchanged
 
-## 4. No match
+---
 
-1. Option 3: stock = GOOG, bidding price = 100, amount = 5, user = BUYER_ID
-2. Option 4: stock = GOOG, asking price = 150, amount = 5, user = SELLER_ID
+**Reset Instructions (if needed):**
+Delete `accounts.json`, `biddings.json`, `askings.json`, and `transactions.txt` to start fresh.
 
-Nothing should be executed. Both files keep the bid and the ask. transactions.txt does not change.
-
-
-## Reset between runs
-
-Delete accounts.json, biddings.json, askings.json, transactions.txt and start over with fresh accounts.
+**Note:** The program automatically saves all data. You can log in with the same User ID on future runs.
